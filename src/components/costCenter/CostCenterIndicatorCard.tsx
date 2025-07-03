@@ -37,20 +37,20 @@ export const CostCenterIndicatorCard = ({
     }
   };
 
-  const getAlertBadgeColor = () => {
+  const getIconColor = () => {
     switch (alert) {
-      case 'success': return 'text-success-600 bg-success-100';
-      case 'warning': return 'text-warning-600 bg-warning-100';
-      case 'danger': return 'text-danger-600 bg-danger-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'success': return 'text-success-600';
+      case 'warning': return 'text-warning-600';
+      case 'danger': return 'text-danger-600';
+      default: return 'text-primary-600';
     }
   };
 
   const getTrendIcon = () => {
     switch (trend) {
-      case 'up': return <TrendingUp className="h-4 w-4 text-success-500" />;
-      case 'down': return <TrendingDown className="h-4 w-4 text-danger-500" />;
-      default: return null;
+      case 'up': return '↗';
+      case 'down': return '↘';
+      default: return '→';
     }
   };
 
@@ -62,9 +62,9 @@ export const CostCenterIndicatorCard = ({
   };
 
   return (
-    <Card 
+    <div 
       className={cn(
-        "transition-all duration-200 border-2",
+        "p-6 rounded-xl border-2 shadow-sm transition-all duration-200",
         getAlertColor(),
         onClick ? "cursor-pointer hover:shadow-lg hover:scale-105 active:scale-95" : "hover:shadow-md"
       )}
@@ -78,69 +78,73 @@ export const CostCenterIndicatorCard = ({
         }
       }}
     >
-      <CardHeader className="pb-3 relative">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            {Icon && <Icon className="h-5 w-5" />}
-            {title}
-          </CardTitle>
-          {alert && (
-            <div className="flex items-center gap-2">
-              <div className={cn(
-                "w-3 h-3 rounded-full animate-pulse-glow",
-                alert === 'success' ? 'bg-success-500' :
-                alert === 'warning' ? 'bg-warning-500' : 'bg-danger-500'
-              )} />
-              {onClick && (
-                <div className="text-xs text-gray-400 font-medium hover:text-gray-600 transition-colors">
-                  Clique para detalhes
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2">
-            <div className="text-3xl font-bold text-primary">
-              {value}
-            </div>
-            {getTrendIcon()}
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            {Icon && <Icon className={cn("w-5 h-5", getIconColor())} />}
+            <h3 className="text-sm font-medium text-gray-700">{title}</h3>
           </div>
           
-          {subtitle && (
-            <p className="text-sm text-gray-600">
-              {subtitle}
-            </p>
-          )}
-
-          {alert && (
-            <Badge className={getAlertBadgeColor()}>
-              {alert === 'success' ? 'Excelente' : 
-               alert === 'warning' ? 'Atenção' : 'Crítico'}
-            </Badge>
-          )}
-
-          {progressValue !== undefined && (
-            <div className="space-y-2">
-              <Progress 
-                value={progressValue} 
-                className="h-2"
-              />
-              <div className="text-xs text-gray-500">
-                {progressValue.toFixed(0)}% de atividade
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-2">
+              <p className="text-2xl font-bold text-gray-900">{value}</p>
+              <span className="text-lg opacity-70">{getTrendIcon()}</span>
+            </div>
+            
+            {subtitle && (
+              <p className={cn("text-sm font-medium", 
+                alert === 'success' ? 'text-success-600' :
+                alert === 'warning' ? 'text-warning-600' : 
+                alert === 'danger' ? 'text-danger-600' : 'text-gray-600'
+              )}>
+                {subtitle}
+              </p>
+            )}
+            
+            {description && (
+              <p className="text-xs text-gray-500">
+                {description}
+              </p>
+            )}
+            
+            {progressValue !== undefined && (
+              <div className="space-y-1">
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-300",
+                      alert === 'success' ? 'bg-success-500' : 
+                      alert === 'warning' ? 'bg-warning-500' : 'bg-danger-500'
+                    )}
+                    style={{ 
+                      width: `${Math.min(100, Math.max(0, progressValue))}%`
+                    }}
+                  />
+                </div>
+                <div className="text-xs text-gray-500">
+                  {progressValue.toFixed(0)}% de atividade
+                </div>
               </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex flex-col items-end gap-2">
+          {alert && (
+            <div className={cn(
+              "w-3 h-3 rounded-full animate-pulse-glow",
+              alert === 'success' ? 'bg-success-500' :
+              alert === 'warning' ? 'bg-warning-500' : 'bg-danger-500'
+            )} />
+          )}
+          
+          {onClick && (
+            <div className="text-xs text-gray-400 font-medium hover:text-gray-600 transition-colors">
+              Clique para detalhes
             </div>
           )}
-
-          {description && (
-            <p className="text-xs text-gray-500 mt-2">
-              {description}
-            </p>
-          )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
