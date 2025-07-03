@@ -1,9 +1,12 @@
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, TrendingDown, Target, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { CostCenterCategory } from '@/types/costCenter';
+import { CostCenterIndicatorCard } from './CostCenterIndicatorCard';
+import { CostCenterIndicatorModal } from './CostCenterIndicatorModal';
 
 interface CostCenterStrategicIndicatorsProps {
   categories: CostCenterCategory[];
@@ -12,6 +15,7 @@ interface CostCenterStrategicIndicatorsProps {
 export const CostCenterStrategicIndicators = ({
   categories
 }: CostCenterStrategicIndicatorsProps) => {
+  const [selectedIndicator, setSelectedIndicator] = useState<'concentration' | 'categories' | 'ticket' | null>(null);
   const totalExpenses = categories.reduce((sum, cat) => sum + cat.totalAmount, 0);
   
   // Indicadores estratégicos
@@ -156,67 +160,44 @@ export const CostCenterStrategicIndicators = ({
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Concentração de Custos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">
-                {costConcentration.toFixed(1)}%
-              </div>
-              <p className="text-sm text-gray-600 mt-1">
-                Top 3 categorias representam
-              </p>
-              <Badge variant={costConcentration > 80 ? "destructive" : "secondary"} className="mt-2">
-                {costConcentration > 80 ? 'Alta Concentração' : 'Distribuição Equilibrada'}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+        <CostCenterIndicatorCard
+          title="Concentração de Custos"
+          value={`${costConcentration.toFixed(1)}%`}
+          subtitle="Top 3 categorias representam"
+          trend="up"
+          alert={costConcentration > 80 ? 'danger' : costConcentration > 60 ? 'warning' : 'success'}
+          onClick={() => setSelectedIndicator('concentration')}
+          description="Análise da distribuição de custos"
+        />
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Categorias Ativas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">
-                {categories.filter(cat => cat.isActive).length}
-              </div>
-              <p className="text-sm text-gray-600 mt-1">
-                de {categories.length} categorias
-              </p>
-              <div className="mt-2">
-                <Progress 
-                  value={(categories.filter(cat => cat.isActive).length / categories.length) * 100} 
-                  className="h-2"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <CostCenterIndicatorCard
+          title="Categorias Ativas"
+          value={categories.filter(cat => cat.isActive).length.toString()}
+          subtitle={`de ${categories.length} categorias`}
+          trend="stable"
+          alert="success"
+          progressValue={(categories.filter(cat => cat.isActive).length / categories.length) * 100}
+          onClick={() => setSelectedIndicator('categories')}
+          description="Status das categorias de custo"
+        />
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Ticket Médio</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">
-                {formatCurrency(totalExpenses / categories.filter(cat => cat.isActive).length)}
-              </div>
-              <p className="text-sm text-gray-600 mt-1">
-                por categoria ativa
-              </p>
-              <div className="flex items-center justify-center gap-1 mt-2">
-                <TrendingUp className="h-4 w-4 text-green-500" />
-                <span className="text-sm text-green-600">+5.2% vs mês anterior</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <CostCenterIndicatorCard
+          title="Ticket Médio"
+          value={formatCurrency(totalExpenses / categories.filter(cat => cat.isActive).length)}
+          subtitle="por categoria ativa"
+          trend="up"
+          alert="success"
+          onClick={() => setSelectedIndicator('ticket')}
+          description="+5.2% vs mês anterior"
+        />
       </div>
+
+      <CostCenterIndicatorModal
+        open={selectedIndicator !== null}
+        onOpenChange={(open) => !open && setSelectedIndicator(null)}
+        indicatorType={selectedIndicator}
+        categories={categories}
+      />
     </div>
   );
 };
