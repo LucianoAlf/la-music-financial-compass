@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowDown, Check, ChevronDown, Sparkles, TrendingUp, BarChart3, Target, Zap, Shield, Star, Play } from 'lucide-react';
+import { ArrowDown, Check, ChevronDown, Sparkles, TrendingUp, BarChart3, Target, Clock, Zap, Shield, Star, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface LandingPageProps {
@@ -56,10 +56,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginClick, onSignup
   ];
 
   const stats = [
-    { value: "+150%", label: "Aumento na eficiência", icon: TrendingUp },
-    { value: "98%", label: "Satisfação dos clientes", icon: Star },
-    { value: "24/7", label: "Suporte disponível", icon: Shield },
-    { value: "50ms", label: "Tempo de resposta", icon: Zap }
+    { value: "95%", label: "Precisão nas análises financeiras", icon: Target },
+    { value: "-40%", label: "Redução no tempo de relatórios", icon: Clock },
+    { value: "+200%", label: "Melhoria na visibilidade financeira", icon: BarChart3 },
+    { value: "100+", label: "Indicadores monitorados", icon: TrendingUp }
   ];
 
   return (
@@ -228,9 +228,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoginClick, onSignup
                   <TrendingUp className="h-10 w-10 text-white" />
                 </div>
                 <div className="text-6xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent mb-4">
-                  +150%
+                  95%
                 </div>
-                <div className="text-xl text-muted-foreground">Aumento na eficiência dos processos</div>
+                <div className="text-xl text-muted-foreground">Precisão nas análises financeiras</div>
               </div>
             </div>
           </div>
